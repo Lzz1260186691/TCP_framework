@@ -1,40 +1,41 @@
 package znet
 
 import (
+	"TCP_Framework/zinx/ziface"
 	"fmt"
-	"net"
 	"testing"
-	"time"
 )
 
-func ClientTest() {
-	fmt.Println("Client Test ... start")
-	time.Sleep(3 * time.Second)
-	conn, err := net.Dial("tcp", "127.0.0.1:7777")
-	if err != nil {
-		fmt.Println("client start err,exit!")
-		return
-	}
-	for {
-		_, err := conn.Write([]byte("hello ZINX"))
-		if err != nil {
-			fmt.Println("write error err", err)
-			return
-		}
-		buf := make([]byte, 512)
-		cnt, err := conn.Read(buf)
-		if err != nil {
-			fmt.Println("read buf error")
-			return
-		}
-		fmt.Printf("server call back:%s,cnt=%d\n", buf[:cnt], cnt)
+type PingRouter struct {
+	BaseRouter
+}
 
-		time.Sleep(1 * time.Second)
+func (this *PingRouter) PreHandle(request ziface.IRequest) {
+	fmt.Println("Call Router Prehandle")
+	_, err := request.GetConnection().GetTCPConnection().Write([]byte("before ping ...\n"))
+	if err != nil {
+		fmt.Println("call back ping ping ping error")
+	}
+}
+
+func (this *PingRouter) Handle(request ziface.IRequest) {
+	fmt.Println("Call PingRouter Handle")
+	_, err := request.GetConnection().GetTCPConnection().Write([]byte("ping...ping...ping\n"))
+	if err != nil {
+		fmt.Println("call back ping ping ping error")
+	}
+}
+
+func (this *PingRouter) PostHandle(request ziface.IRequest) {
+	fmt.Println("Call Router PostHandle")
+	_, err := request.GetConnection().GetTCPConnection().Write([]byte("After ping .....\n"))
+	if err != nil {
+		fmt.Println("call back ping ping ping error")
 	}
 }
 
 func TestServer(t *testing.T) {
-	s := NewServer("[zinx V0.1]")
-	go ClientTest()
+	s := NewServer("[zinx V0.3]")
+	s.AddRouter(&PingRouter{})
 	s.Serve()
 }
