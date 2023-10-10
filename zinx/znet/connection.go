@@ -14,12 +14,12 @@ type Connection struct {
 	ExitBuffChan chan bool
 }
 
-func NewConnection(conn *net.TCPConn, connID uint32) *Connection {
+func NewConnection(conn *net.TCPConn, connID uint32, router ziface.IRouter) *Connection {
 	c := &Connection{
 		Conn:         conn,
 		ConnID:       connID,
 		isClosed:     false,
-		Router:       nil,
+		Router:       router,
 		ExitBuffChan: make(chan bool, 1),
 	}
 	return c
