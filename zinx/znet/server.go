@@ -16,15 +16,6 @@ type Server struct {
 	Router    ziface.IRouter
 }
 
-//func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
-//	fmt.Println("[Conn Handle] CallBackToClient ...")
-//	if _, err := conn.Write(data[:cnt]); err != nil {
-//		fmt.Println("Write back buf err", err)
-//		return errors.New("CallBackToClient error")
-//	}
-//	return nil
-//}
-
 func (s *Server) Start() {
 	fmt.Printf("[START] Server listenner at IP: %s,Port %d, is starting \n", s.IP, s.Port)
 	fmt.Printf("[Zinx] Version: %s, MaxConn: %d,  MaxPacketSize: %d\n",
